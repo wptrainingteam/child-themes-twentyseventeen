@@ -23,7 +23,7 @@ You will be better equipped to work through this lesson if you have experience i
 
 ## Assets
 
-*   [Twenty Seventeen theme](https://wordpress.org/themes/twentyseventeen/ "Twenty Sixteen Theme")
+*   [Twenty Seventeen theme](https://wordpress.org/themes/twentyseventeen/ "Twenty Seventeen Theme")
 *   [Sample screenshot png file](https://make.wordpress.org/training/files/2017/05/screenshot.png)
 
 ## Screening Questions
@@ -35,9 +35,9 @@ You will be better equipped to work through this lesson if you have experience i
 
 ## Teacher Notes
 
-*   **Time Estimate: **45 minutes
+*   **Time Estimate:** 45 minutes
 *   Performing a live demo while teaching the steps to make a child theme is crucial to having the material "click" for students.
-*   It is easiest for students to work on a locally installed copy of WordPress. Set some time aside before class to assist students with installing WordPress locally if they need it. For more information on how to install WordPress locally, please visit our [Teacher Resources page](http://make.wordpress.org/training/teacher-resources/).
+*   It is easiest for students to work on a locally installed copy of WordPress. Set some time aside before class to assist students with installing WordPress locally if they need it. For more information on how to install WordPress locally, please visit our [Teacher Resources page](https://make.wordpress.org/training/teacher-resources/).
 *   The preferred answers to the screening questions is "yes." Participants who reply "no" to all 4 questions may not be ready for this lesson.
 *   Built using WordPress 4.7.4.
 
@@ -55,9 +55,9 @@ The #1 Rule of WordPress development is to **never directly modify WordPress fil
 
 *   WordPress core files
 *   Plugin files
-*   Theme files*
+*   Theme files
 
-*Exception: starter themes that have been intentionally created by theme builders for you to modify. **Why?**
+Exception: starter themes that have been intentionally created by theme builders for you to modify. **Why?**
 
 *   *   **Updates wipe out customization changes**
 
@@ -99,7 +99,7 @@ At a minimum, your Child Theme needs a `style.css` file. The `style.css` file te
  Description: The custom theme [Your Theme Name] using the parent theme Twenty Seventeen.
  Author: [You]
  Author URI: [Your URL]
- Template: <span style="color: #000000">twentyseventeen</span>
+ Template: twentyseventeen
  Version: 1
  */
 </pre>
@@ -119,16 +119,20 @@ All of these variables are optional, with the exception of `**Template:**`. If t
 
 Your Child Theme needs to call the `style.css` files using a method called "enqueueing scripts." To add the calls for the parent and child theme stylesheets to your child theme, first you need to create a `functions.php` file. Place this file inside the Child Theme's folder. Make sure it is in the root level of the Child Theme folder and not inside a subfolder. [tip]Note that `functions.php` in the child theme does not replace `functions.php` in the parent theme. This is where you can put hooks, actions, and filters that modify or add functionality to the parent theme, rather than replacing it.[/tip] The first line of your child theme's `functions.php` will be an opening PHP tag (`<?php`), after which you can enqueue your parent and child theme stylesheets. The correct method of enqueuing the parent theme stylesheet is to add a `wp_enqueue_scripts` action and use `wp_enqueue_style()` in your child theme's `functions.php`. The following example function will only work if your Parent Theme uses only one main `style.css` to hold all of the css. If your theme has more than one .css file (eg. `ie.css`, `style.css`, `main.css`) then you will have to make sure to maintain all of the Parent Theme dependencies.
 
-<pre><?php
+```PHP
+<?php
 function mychildtheme_enqueue_styles() {
    wp_enqueue_style( 'parent-style', get_template_directory_uri() . '/style.css' );
 }
 add_action( 'wp_enqueue_scripts', 'mychildtheme_enqueue_styles' ); 
-?></pre>
+?>
+```
 
 This line needs to point to the Parent Theme’s `style.css` file. Your Child Theme's `style.css` file can be empty. But if it contains CSS code, as it usually will, you will need to enqueue it as well. Setting 'parent-style' as a dependency will ensure that the child theme stylesheet loads after it.
 
-<pre>function mychildtheme_enqueue_styles() {
+```PHP
+<?php
+function mychildtheme_enqueue_styles() {
     $parent_style = 'parent-style';
 
     wp_enqueue_style( $parent_style, get_template_directory_uri() . '/style.css' );
@@ -138,7 +142,8 @@ This line needs to point to the Parent Theme’s `style.css` file. Your Child Th
     );
 }
 add_action( 'wp_enqueue_scripts', 'mychildtheme_enqueue_styles' );
-</pre>
+?>
+```
 
 This is the recommended way to enque the styles for your Child Theme. [warning]The old way of enqueuing scripts and styles was to use `@import url("../parentfolder/style.css");`, and you'll still see old articles online that show that technique. But this is very inefficient, so a better way is to use the `wp_enqueue_style()` method covered here.[/warning]
 
@@ -178,16 +183,19 @@ Now the Site Title is 4.75rem instead of 1.75rem. [![](https://make.wordpress.or
 
 [Templates](http://codex.wordpress.org/Templates) are the files that control how your WordPress site will be displayed on the Web. Inside the `twentyseventeen` folder are all of Twenty Seventeen's template files. You can create your own versions of these files in your Child Theme. [![](https://make.wordpress.org/training/files/2017/05/twenty-seventeen-files.png)](https://make.wordpress.org/training/files/2017/05/twenty-seventeen-files.png) Let's say you want to replace the text "Proudly powered by WordPress" in the footer with a copyright. Here's how it looks now: [![](https://make.wordpress.org/training/files/2017/05/twenty-seventeen-default-footer.png)](https://make.wordpress.org/training/files/2017/05/twenty-seventeen-default-footer.png) Open `footer.php` in the `twentyseventeen` folder. You can see the following line of code that needs to be edited. This statement pulls in a template with the "Proudly powered by WordPress" message. You'll no longer need to use that template file, so this is the statement you'll replace.
 
-<pre> get_template_part( 'template-parts/footer/site', 'info' );
- ?></pre>
+```PHP
+<?php
+get_template_part( 'template-parts/footer/site', 'info' );
+?>
+```
 
 Save a copy of `footer.php` into the Child Theme folder. You can safely edit this Child Theme file, leaving the original copy of `footer.php` in `wp-content/themes/twentyseventeen` intact. Just like your other Child Theme files, `wp-content/themes/mychildtheme/footer.php` will override the Parent copy. To display a Copyright line, replace the content above in `footer.php` in `wp-content/themes/mychildtheme` with the following code:
 
-<pre> ?>
- <div class="site-info">
-    Copyright &copy; <?php echo date('Y'); ?>
- </div><!-- .site-info -->
-</pre>
+```PHP
+<?php
+    echo 'Copyright &copy; '.date('Y');
+?>
+```
 
 The result on the front-end of the site: [![](https://make.wordpress.org/training/files/2017/05/mychildtheme-footer.png)](https://make.wordpress.org/training/files/2017/05/mychildtheme-footer.png)
 
@@ -197,7 +205,8 @@ The result on the front-end of the site: [![](https://make.wordpress.org/trainin
 
 In addition to being able to override existing templates with a Child Theme, you can also create new templates. Let's say you want to add a new Template without a sidebar. Make a copy of `index.php` in your Child Theme and rename it `index-nosidebar.php`. Edit the existing code at the top:
 
-<pre><?php
+```PHP
+<?php
 /**
 * The main template file
 *
@@ -215,28 +224,28 @@ In addition to being able to override existing templates with a Child Theme, you
 */
 
 get_header(); ?>
-</pre>
+```
 
 to the following:
 
-<pre> <?php
+```PHP
+<?php
  /*
  Template Name: Page with no sidebar
  */
 
  get_header(); ?>
-
-</pre>
+```
 
 The name of the template goes after the variable `Template Name:`. Finally, find and remove the line of code near the end of the file which loads the sidebar. This is called `get_sidebar();`:
 
-<pre>        </main><!-- #main --> 
-    </div><!-- #primary --> 
-    <?php get_sidebar(); ?>  // DELETE this line!
-</div><!-- .wrap -->
-<?php get_footer();  // leave this line in!
-
-</pre>
+```PHP
+<?php
+    get_sidebar();  // DELETE this line!
+    
+get_footer();  // leave this line in!
+?>
+```
 
 The new template will now appear under **Page Attributes** on the Edit Page screen: [![](https://make.wordpress.org/training/files/2017/05/no-sidebar-template.png)](https://make.wordpress.org/training/files/2017/05/no-sidebar-template.png)
 
@@ -281,7 +290,7 @@ Your Child Theme now has one file that overrides elements in its Parent Theme's 
 3.  Theme files
 4.  All of the above
 
-**Answer:** 4\. All of the above
+**Answer:** 4. All of the above
 
 * * *
 
@@ -293,7 +302,7 @@ Your Child Theme now has one file that overrides elements in its Parent Theme's 
 4.  readme.html
 5.  license.txt
 
-**Answer:** 3\. style.css
+**Answer:** 3. style.css
 
 * * *
 
@@ -305,7 +314,7 @@ Your Child Theme now has one file that overrides elements in its Parent Theme's 
 4.  `Template: [parentfolder] and wp_enqueue_style( 'parent-style', get_template_directory_uri() . '/style.css' );`
 5.  `Theme Name: [Name] and wp_enqueue_style( 'parent-style', get_template_directory_uri() . '/style.css' );`
 
-**Answer:** 4\. `Template: [parentfolder] and wp_enqueue_style( 'parent-style', get_template_directory_uri() . '/style.css' );`
+**Answer:** 4. `Template: [parentfolder] and wp_enqueue_style( 'parent-style', get_template_directory_uri() . '/style.css' );`
 
 * * *
 
@@ -316,7 +325,7 @@ Your Child Theme now has one file that overrides elements in its Parent Theme's 
 3.  Upload screenshot.png to the /images folder of /wp-admin/
 4.  Upload screenshot.png to the /images folder in /wp-content/
 
-**Answer:** 1\. Upload screenshot.png to the child theme folder
+**Answer:** 1. Upload screenshot.png to the child theme folder
 
 ## Additional Resources
 

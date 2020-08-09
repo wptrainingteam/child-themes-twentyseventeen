@@ -145,7 +145,7 @@ add_action( 'wp_enqueue_scripts', 'mychildtheme_enqueue_styles' );
 ?>
 ```
 
-This is the recommended way to enque the styles for your Child Theme. [warning]The old way of enqueuing scripts and styles was to use `@import url("../parentfolder/style.css");`, and you'll still see old articles online that show that technique. But this is very inefficient, so a better way is to use the `wp_enqueue_style()` method covered here.[/warning]
+This is the recommended way to enqueue the styles for your Child Theme. [warning]The old way of enqueuing scripts and styles was to use `@import url("../parentfolder/style.css");`, and you'll still see old articles online that show that technique. But this is very inefficient, so a better way is to use the `wp_enqueue_style()` method covered here.[/warning]
 
 ### Step 4: A screenshot.png file
 
